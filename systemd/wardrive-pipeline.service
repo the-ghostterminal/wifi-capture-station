@@ -1,0 +1,17 @@
+[Unit]
+Description=Wi-Fi capture station (mode decision, capture, housekeeping)
+After=network.target
+Wants=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/opt/wardrive/bin/run_pipeline.sh
+# A capture ends on SIGTERM; give it time to flush and restore the interface.
+TimeoutStopSec=30
+Restart=on-failure
+RestartSec=15
+StandardOutput=append:/opt/wardrive/logs/pipeline.log
+StandardError=append:/opt/wardrive/logs/pipeline.log
+
+[Install]
+WantedBy=multi-user.target

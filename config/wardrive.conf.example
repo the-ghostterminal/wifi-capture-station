@@ -1,0 +1,20 @@
+# Non-secret settings. Secrets belong in secrets.conf (mode 600).
+#
+# Endpoint that accepts a capture file and stores it for processing.
+# Leave empty to disable the upload step entirely.
+UPLOAD_URL=""
+
+# Endpoint that returns the processed results file:
+#   bssid:station:essid:key
+# Leave empty to disable the sync step.
+RESULTS_URL=""
+
+# Every excluded address costs three BPF clauses and the compiled filter has a
+# hard size limit. Past this many entries the first N are used.
+MAX_EXCLUDE_MACS=24
+
+# Remove a capture directory after a successful upload.
+DELETE_AFTER_UPLOAD=1
+
+# Per-request timeout in seconds.
+CURL_MAX_TIME=300

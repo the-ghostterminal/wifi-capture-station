@@ -1,0 +1,17 @@
+# Captured material and derived data never belong in the repository.
+data/
+captures/
+logs/
+.state/
+*.pcapng
+*.22000
+*.cap
+*.log
+
+# Live configuration: endpoints and the API key.
+config/wardrive.conf
+config/secrets.conf
+
+# Editors
+*.swp
+.DS_Store
