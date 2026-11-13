@@ -98,6 +98,13 @@ rejects and capturing nothing.
 `run_pipeline.sh` meant two processes fighting over the interface. The pipeline
 takes a `flock` and is the only thing that starts a capture.
 
+**The mode is decided once, at start.** `at_home` is evaluated a single time
+when the pipeline begins — cable in means the boot run does the housekeeping and
+exits, cable out means it captures until SIGTERM. Nothing polls the cable while
+a run is going, so unplugging mid-session changes nothing until the next start.
+(`Restart=on-failure` re-runs the unit after a crash, and that run decides again
+from the cable as it is then.)
+
 **A manual run returns the prompt.** The box is headless, so running
 `run_pipeline.sh` from a shell used to leave the terminal stuck on the capture
 until SIGTERM. It now prints the mode, detaches with `setsid nohup` into
