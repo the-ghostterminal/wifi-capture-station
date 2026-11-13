@@ -63,14 +63,17 @@ normalize_mac() { printf '%s' "$1" | tr -d ':-' | tr '[:upper:]' '[:lower:]'; }
 # radio (or USB ethernet) shows eth0 DOWN while it is sitting on the sofa -
 # which was read as "mobile" and started a capture indoors. So: eth0 carrier
 # first, then any default route that does not belong to the capture radio.
+# Home or mobile is decided by the wired uplink alone: eth0 is the "I am home"
+# switch. Cable in -> home (no capture, just the post steps). Cable out ->
+# mobile (capture, then the post steps when it stops).
+#
+# Carrier is the signal, not `ip link` state and not the default route. A pulled
+# cable still shows a state, and a DHCP default route can outlive the link it was
+# handed out on, so either one reads "home" in a car park.
 at_home() {
-    local iface="${1:-wlan0}" dev
-    if ip -o link show eth0 2>/dev/null | grep -q 'state UP'; then
-        return 0
-    fi
-    dev=$(ip route show default 2>/dev/null \
-          | awk '{for(i=1;i<=NF;i++) if($i=="dev"){print $(i+1); exit}}')
-    [[ -n "$dev" && "$dev" != "$iface" ]]
+    local uplink="${UPLINK_IFACE:-eth0}"
+    [[ -r "/sys/class/net/$uplink/carrier" ]] || return 1
+    [[ "$(cat "/sys/class/net/$uplink/carrier" 2>/dev/null)" == "1" ]]
 }
 
 # hcxpcapngtool emits the ESSID hex-encoded. Decoded here in pure bash: the

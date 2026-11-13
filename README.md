@@ -19,7 +19,8 @@ decide whether an unattended box produces usable data or a corrupt card.
                             |
         +-------------------+--------------------+
         |                                        |
-   at_home? yes                             at_home? no
+   eth0 cable in                           eth0 cable out
+      = at home                              = mobile
         |                                        |
    skip capture                       capture.sh -> monitor mode
         |                              hcxdumptool -> capture.pcapng

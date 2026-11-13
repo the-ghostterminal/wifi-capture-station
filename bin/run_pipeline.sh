@@ -5,8 +5,8 @@
 if [ -z "${BASH_VERSION:-}" ]; then exec bash "$0" "$@"; fi
 # run_pipeline.sh - single entry point, run at boot.
 #
-#   eth0 up   -> at home      : skip capture, run the post-capture steps
-#   eth0 down -> mobile       : capture until SIGTERM, then run the post steps
+#   eth0 cable in  -> at home : skip capture, run the post-capture steps
+#   eth0 cable out -> mobile  : capture until SIGTERM, then run the post steps
 #
 # There is one entry point on purpose. Running capture.sh directly from a second
 # systemd unit as well means two processes fighting over the same interface,
