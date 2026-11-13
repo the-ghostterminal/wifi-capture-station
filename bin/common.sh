@@ -57,12 +57,7 @@ check_deps() {
 
 normalize_mac() { printf '%s' "$1" | tr -d ':-' | tr '[:upper:]' '[:lower:]'; }
 
-# "At home" means there is an uplink we are not capturing on.
-#
-# Carrier on eth0 was the original signal, but a box whose uplink is a second
-# radio (or USB ethernet) shows eth0 DOWN while it is sitting on the sofa -
-# which was read as "mobile" and started a capture indoors. So: eth0 carrier
-# first, then any default route that does not belong to the capture radio.
+# "At home" means the wired uplink is plugged in.
 # Home or mobile is decided by the wired uplink alone: eth0 is the "I am home"
 # switch. Cable in -> home (no capture, just the post steps). Cable out ->
 # mobile (capture, then the post steps when it stops).

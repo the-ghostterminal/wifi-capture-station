@@ -98,6 +98,14 @@ rejects and capturing nothing.
 `run_pipeline.sh` meant two processes fighting over the interface. The pipeline
 takes a `flock` and is the only thing that starts a capture.
 
+**A manual run returns the prompt.** The box is headless, so running
+`run_pipeline.sh` from a shell used to leave the terminal stuck on the capture
+until SIGTERM. It now prints the mode, detaches with `setsid nohup` into
+`logs/pipeline.log`, and hands the terminal back; `pkill -TERM -f
+run_pipeline.sh` stops it. The systemd unit has no TTY and stays in the
+foreground, which is what a supervisor should see. `--foreground` forces that
+behaviour for debugging.
+
 ## The record format
 
 ```

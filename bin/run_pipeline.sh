@@ -29,6 +29,11 @@ fi
 
 log "=== pipeline start $(date -Is) ==="
 
+FOREGROUND=0
+if [[ "${1:-}" == "--foreground" || "${1:-}" == "-f" ]]; then
+    FOREGROUND=1
+    shift
+fi
 IFACE="${1:-wlan0}"
 
 run_post() {
@@ -47,6 +52,19 @@ if at_home "$IFACE"; then
     log "AT HOME (uplink present): capture skipped."
     run_post
     log "=== pipeline complete (home) ==="
+    exit 0
+fi
+
+# Headless box: a manual run must not hold the terminal. Under systemd there is
+# no TTY, so the run stays in the foreground where the supervisor can see it;
+# from a shell it detaches after this check and the prompt comes straight back.
+if (( ! FOREGROUND )) && [[ -t 1 && -z "${WARDRIVE_DETACHED:-}" ]]; then
+    log "MOBILE (no uplink): detaching, the capture keeps running in the background."
+    exec 9>&-   # hand the lock to the child; it takes it again itself
+    WARDRIVE_DETACHED=1 setsid nohup bash "$0" "$@" \
+        >> "$LOGS_DIR/pipeline.log" 2>&1 < /dev/null &
+    log "pid $! - log $LOGS_DIR/pipeline.log"
+    log "stop it with: pkill -TERM -f run_pipeline.sh"
     exit 0
 fi
 
