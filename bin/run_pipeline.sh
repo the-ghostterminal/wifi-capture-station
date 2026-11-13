@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+# Re-exec under bash when started as `sh script.sh`. dash (Debian's sh) has no
+# [[ ]], no BASH_SOURCE, no ${var//pat/rep} and no arrays, so it dies on the
+# first line of the real work instead of doing something useful.
+if [ -z "${BASH_VERSION:-}" ]; then exec bash "$0" "$@"; fi
 # run_pipeline.sh - single entry point, run at boot.
 #
 #   eth0 up   -> at home      : skip capture, run the post-capture steps

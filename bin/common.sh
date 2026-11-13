@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+# Re-exec under bash when started as `sh script.sh`. dash (Debian's sh) has no
+# [[ ]], no BASH_SOURCE, no ${var//pat/rep} and no arrays, so it dies on the
+# first line of the real work instead of doing something useful.
+if [ -z "${BASH_VERSION:-}" ]; then exec bash "$0" "$@"; fi
 # common.sh - shared paths, logging and access-point store I/O.
 #
 # Sourced by every script in this suite. It deliberately does NOT set -e or -u:
