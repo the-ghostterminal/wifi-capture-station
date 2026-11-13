@@ -38,7 +38,16 @@ fi
 UNIT=/etc/systemd/system/wardrive-pipeline.service
 sed "s#/opt/wardrive#$PREFIX#g" "$SRC/systemd/wardrive-pipeline.service" > "$UNIT"
 chmod 644 "$UNIT"
+
+# A default route left behind on a dead link (eth0 unplugged, DHCP did not
+# release it) outranks the working wlan1 route and kills all egress.
+PRUNE=/usr/local/sbin/route-prune.sh
+install -m 755 "$SRC/systemd/route-prune.sh" "$PRUNE"
+install -m 644 "$SRC/systemd/route-prune.service" /etc/systemd/system/
+install -m 644 "$SRC/systemd/route-prune.timer" /etc/systemd/system/
 systemctl daemon-reload
+systemctl enable --now route-prune.timer
+echo "[+] route-prune timer installed"
 echo "[+] unit installed: $UNIT"
 
 cat <<EOF

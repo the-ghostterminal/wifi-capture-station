@@ -152,6 +152,8 @@ Bugs this build found the hard way, all now fixed, all visible in the history:
 
 | Symptom | Cause |
 |---|---|
+| `Bad substitution`, `[[: not found`, `Syntax error: "("` | run as `sh` (dash): scripts now re-exec themselves under bash |
+| Sync and upload fail with `Could not connect`, LAN still fine | a default route left on the unplugged `eth0` outranked the working `wlan1` route; `route-prune.timer` deletes default routes on links with no carrier |
 | Captures never uploaded, no error logged | `set -e` + command substitution killed the script before the failure branch |
 | Record order flipped between runs | sorted file built, unsorted file written |
 | One network name blank in the record | ESSID used as a `printf` format string |

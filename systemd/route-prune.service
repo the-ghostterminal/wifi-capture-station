@@ -1,0 +1,8 @@
+[Unit]
+Description=Drop default routes on links with no carrier
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/route-prune.sh
