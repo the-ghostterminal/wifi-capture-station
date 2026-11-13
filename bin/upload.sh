@@ -27,7 +27,11 @@ require_secrets
 upload_one() {   # upload_one <url> <file> -> prints the last HTTP status
     local url="$1" file="$2" max=5 delay=2 code=000 i
     for (( i = 1; i <= max; i++ )); do
-        code=$(curl -sS --max-time "$CURL_MAX_TIME" -o /dev/null -w '%{http_code}' \
+        # -4 first, then plain: the resolver here can answer AAAA only and this
+        # Pi has no IPv6 route, which fails the connect before any bytes move.
+        code=$(curl -4 -sS --max-time "$CURL_MAX_TIME" -o /dev/null -w '%{http_code}' \
+                    -F "file=@$file" -b "key=$API_KEY" "$url" \
+               || curl -sS --max-time "$CURL_MAX_TIME" -o /dev/null -w '%{http_code}' \
                     -F "file=@$file" -b "key=$API_KEY" "$url") || code=000
         [[ "$code" == "200" ]] && { printf '%s' "$code"; return 0; }
         if (( i < max )); then

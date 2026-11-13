@@ -38,7 +38,11 @@ fi
 log "Downloading results file ..."
 download_ok=0
 for i in 1 2 3 4 5; do
-    if curl -fsS --max-time "$CURL_MAX_TIME" -b "key=$API_KEY" "$RESULTS_URL" -o "$RAW"; then
+    # -4 first: this host's resolver sometimes answers AAAA only, and the Pi has
+    # no IPv6 route, so the connect fails before a byte moves. Plain curl stays
+    # as the fallback for a v6-only network.
+    if curl -4 -fsS --max-time "$CURL_MAX_TIME" -b "key=$API_KEY" "$RESULTS_URL" -o "$RAW" \
+        || curl -fsS --max-time "$CURL_MAX_TIME" -b "key=$API_KEY" "$RESULTS_URL" -o "$RAW"; then
         download_ok=1
         break
     fi
